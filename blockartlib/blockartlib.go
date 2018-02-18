@@ -65,15 +65,15 @@ type MinerNetSettings struct {
 }
 
 type MyCanvas struct {
-	conn             *rpc.Client
-	minerPrivKey     ecdsa.PrivateKey
-	minerNetSettings MinerNetSettings
-	artnodePrivKey   string
+	conn           *rpc.Client
+	minerPrivKey   ecdsa.PrivateKey
+	CanvSetting    CanvasSettings
+	artnodePrivKey string
 }
 
 type ValidMiner struct {
-	MinerNetSets MinerNetSettings
-	Valid        bool
+	CanvSetting CanvasSettings
+	Valid       bool
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,12 +278,12 @@ func OpenCanvas(minerAddr string, privKey ecdsa.PrivateKey) (canvas Canvas, sett
 		return canvas, CanvasSettings{}, DisconnectedError("InkMinerRPC.Connect")
 	}
 	println("3")
-	tmp := validMiner.MinerNetSets
-	setting = tmp.canvasSettings
+	setting = (*validMiner).CanvSetting
+
 	println("4")
 	artPkinStr := getPrivKeyInStr(*artnodePK)
-	canv := MyCanvas{c, privKey, validMiner.MinerNetSets, artPkinStr}
-
+	canv := MyCanvas{c, privKey, (*validMiner).CanvSetting, artPkinStr}
+	fmt.Println("PPPPPPPPPPPPPP###", (*validMiner).CanvSetting)
 	canvas = &canv
 	return canvas, setting, err
 }
@@ -394,7 +394,12 @@ func (c *MyCanvas) CloseCanvas() (inkRemaining uint32, err error) {
 	ops := (*reply).CanvOps
 	fmt.Println("CC:", *reply)
 	tmpMap := make(map[string]string)
-	html := "<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML 2.0//EN\"> <HTML><HEAD></HEAD><BODY>	<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" height=\"1400\" width=\"1400\">"
+	height := fmt.Sprint(c.CanvSetting.CanvasYMax)
+	width := fmt.Sprint(c.CanvSetting.CanvasXMax)
+	html := "<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML 2.0//EN\"> <HTML><HEAD></HEAD><BODY>	<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" height=\""
+	html += height
+	html += "\" width=\""
+	html += width + "\">"
 	for _, elem := range ops {
 		for k := 0; k < len(elem); k++ {
 			strs := strings.Split(elem[k], ":")
@@ -413,7 +418,9 @@ func (c *MyCanvas) CloseCanvas() (inkRemaining uint32, err error) {
 	}
 	html = html + "</svg> </BODY> </HTML>"
 
-	fmt.Println(html)
+	d1 := []byte(html)
+	saveOnDisk(d1)
+	// fmt.Println("8787872359874====++", html)
 	inkRemaining = (*reply).InkRemaining
 	return inkRemaining, err
 }
@@ -421,6 +428,20 @@ func (c *MyCanvas) CloseCanvas() (inkRemaining uint32, err error) {
 //======================================================================
 //helper functions
 //======================================================================
+func saveOnDisk(data []byte) error {
+	// @ fail error
+	// fmt.Println("ddd+++++++++++++++++++++++++++++++++", data)
+	file := "./drawOutput.html"
+	fout, err2 := os.Create(file)
+	if err2 != nil {
+		fmt.Println(file, err2)
+	}
+	defer fout.Close()
+	if len(data) != 0 {
+		fout.Write(data)
+	}
+	return nil
+}
 
 func exitOnError(prefix string, err error) {
 	if err != nil {

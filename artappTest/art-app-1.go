@@ -1,6 +1,5 @@
 /*
 
-This art-app tries to draw something where it doesn't have the requisite amount of ink.
 
 Usage:
 go run art-app.go <miner-addr:art-app-port> <privKey>
@@ -41,27 +40,27 @@ func main() {
 	}
 
 	validateNum := uint8(2)
-	fmt.Print(canvas, "ignore", validateNum)
+	//fmt.Print(canvas, "ignore", validateNum)
 
 	/************************
 	Add a line
 	*************************/
-	shapeHash, blockHash, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 200 200 L 0 100", "transparent", "red")
+	_, _, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 200 200 L 0 100", "transparent", "red")
 	if checkError(err) != nil {
+		fmt.Println(err)
 		return
 	}
-	println("----------------------------")
-	fmt.Print(shapeHash, blockHash, ink)
-	println("----------------------------")
+	fmt.Printf("after add a line, ink remaining is %d\n", ink)
 
 	/************************
 	Add a triangle
 	*************************/
-	shapeHash2, blockHash2, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 400 0 L 0 400 h 800 l -400 -400", "transparent", "blue")
+	_, _, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 400 0 L 0 400 h 800 l -400 -400", "transparent", "blue")
 	if checkError(err) != nil {
+		fmt.Println(err)
 		return
 	}
-	fmt.Print(shapeHash2, blockHash2, ink2)
+	fmt.Printf("after add a triangle, ink remaining is %d\n", ink2)
 
 	// Delete the first line.
 	// ink3, err := canvas.DeleteShape(validateNum, shapeHash)
@@ -75,6 +74,7 @@ func main() {
 	// Close the canvas.
 	ink4, err := canvas.CloseCanvas()
 	if checkError(err) != nil {
+		fmt.Println(err)
 		return
 	}
 	fmt.Println(ink4)

@@ -4,7 +4,7 @@ A trivial application to illustrate how the blockartlib library can be
 used from an application in project 1 for UBC CS 416 2017W2.
 
 Usage:
-go run art-app.go <miner-addr:art-app-port> <privKey>
+go run art-app.go
 */
 
 package main
@@ -40,30 +40,36 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-
+	//fmt.Print(canvas, "ignore")
 	validateNum := uint8(2)
-	fmt.Print(canvas, "ignore", validateNum)
-	// Add a line.
-	shapeHash, blockHash, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 0 0 L 0 5", "transparent", "red")
-	if checkError(err) != nil {
-		// return
-	}
-	println("----------------------------")
-	fmt.Print(shapeHash, blockHash, ink)
-	println("----------------------------")
-	// // Add another line.
-	shapeHash2, blockHash2, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 0 0 L 5 0", "transparent", "blue")
-	if checkError(err) != nil {
-		return
-	}
-	fmt.Print(shapeHash2, blockHash2, ink2)
 
-	// Close the canvas.
-	ink4, err := canvas.CloseCanvas()
+	// Add a square.
+	_, _, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 600 600 l 39 0 v 39 h -39 z", "filled", "red")
+	if checkError(err) != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("after add a square, ink remaining is %d\n", ink)
+
+	// // Add 凸
+	_, _, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 800 800 l 50 0 l 0 50 h 50 v 50  h -150 v -50 h 50 z", "transparent", "blue")
+	if checkError(err) != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("after add 凸, ink remaining is %d\n", ink2)
+	// // Add 凹
+	_, _, ink3, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 500 500 l 30 0 l 0 30 h 30 v -30  h 30 v 60 h -90 z", "transparent", "green")
+	if checkError(err) != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("after add 凹, ink remaining is %d\n", ink3)
+
+	_, err = canvas.CloseCanvas()
 	if checkError(err) != nil {
 		return
 	}
-	fmt.Println(ink4)
 }
 
 // If error is non-nil, print it out and return it.

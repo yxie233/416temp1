@@ -42,20 +42,18 @@ func main() {
 	}
 
 	validateNum := uint8(2)
-	fmt.Print(canvas, "ignore", validateNum)
-
-	shapeHash, blockHash, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 200 600 l 39 0 v 39 h -39 z", "non-transparent", "red")
+	//fmt.Print(canvas, "ignore", validateNum)
+	/************************
+	Add a filled square
+	*************************/
+	_, _, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 200 600 l 39 0 v 39 h -39 z", "non-transparent", "red")
 	if checkError(err) != nil {
 		return
 	}
-	fmt.Println(shapeHash, blockHash, ink)
-
-	shapeHash2, blockHash2, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 90 0 l 40 0 v 40 h -40 z", "non-transparent", "red")
-	if checkError(err) != nil {
-		return
-	}
-	fmt.Print(shapeHash2, blockHash2, ink2)
-
+	fmt.Printf("after add a line, ink remaining is %d\n", ink)
+	/************************
+	Add a non closed filled shape which should return   Bad shape svg string [M 400 0 L 0 500 h 400 l -400 -400])
+	*************************/
 	shapeHash3, blockHash3, ink3, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 400 0 L 0 500 h 400 l -400 -400", "non-transparent", "red")
 	if checkError(err) != nil {
 		return

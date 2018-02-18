@@ -1,7 +1,7 @@
 /*
 
-A trivial application to illustrate how the blockartlib library can be
-used from an application in project 1 for UBC CS 416 2017W2.
+Test for overlapping shapes. This art app will
+-Add a triangle which overlap with triangle drawn before
 
 Usage:
 go run art-app.go port
@@ -41,22 +41,22 @@ func main() {
 	}
 
 	validateNum := uint8(2)
-	fmt.Print(canvas, "ignore", validateNum)
-
-	shapeHash, blockHash, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 5 0 l 5 0 L 5 5 h -5 z", "transparent", "red")
+	//fmt.Print(canvas, "ignore", validateNum)
+	/************************
+	Add a triangle overlap with privious one
+	*************************/
+	_, _, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 400 0 L 0 400 h 800 l -400 -400", "transparent", "red")
 	if checkError(err) != nil {
 		return
 	}
-	fmt.Println(shapeHash)
-	fmt.Println(blockHash)
-	fmt.Println(ink)
 
-	// // Delete the first line.
-	// ink3, err := canvas.DeleteShape(validateNum, shapeHash)
-	// if checkError(err) != nil {
-	// 	return
-	// }
-	// fmt.Println(ink3)
+	fmt.Printf("after add a line, ink remaining is %d\n", ink)
+
+	shapeHash2, blockHash2, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 300 0 L 0 500", "transparent", "red")
+	if checkError(err) != nil {
+		return
+	}
+	fmt.Print(shapeHash2, blockHash2, ink2)
 
 	// assert ink3 > ink2
 

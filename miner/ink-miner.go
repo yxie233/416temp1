@@ -336,6 +336,7 @@ func generateNoOpBlock(minerPubKey string) Block {
 	opsArr := make([]Operation, 0)
 	cInks := lastBlk.CanvasInks
 	cOps := lastBlk.CanvasOperations
+	fmt.Println(cOps)
 
 	lastBlkHash, _ := calculateHash(lastBlk, difficulty)
 
@@ -741,11 +742,16 @@ func (m *MinerRPC) AddShape(args AddShapeStruct, reply *AddShapeReply) error {
 
 func (m *MinerRPC) GetSvgString(shapeHash string, svgString *string) error {
 	lastOne := len(blockChain) - 1
-	operations := blockChain[lastOne].Ops
-	for i := 0; i < len(operations); i++ {
-		if operations[i].OpSig == shapeHash {
-			*svgString = operations[i].AppShape // svgString
-			return nil
+	operations := blockChain[lastOne].CanvasOperations
+	for _, ops := range operations {
+		for i := 0; i < len(ops); i++ {
+			strs := strings.Split(ops[i], ":")
+			svgStr := strs[0]
+			shapehash := strs[1]
+			if shapehash == shapeHash {
+				*svgString = svgStr
+				return nil
+			}
 		}
 	}
 	//fmt.Println("@@@ GetSvgString fail")
@@ -900,7 +906,7 @@ func (m *MinerRPC) CloseCanvas(args int, reply *CloseCanvReply) error {
 	ink := blockChain[lastOne].MinerInks[globalPubKeyStr]
 
 	*reply = CloseCanvReply{blockChain[lastOne].CanvasOperations, ink.InkRemain}
-	//fmt.Println("@@@ CloseCanvas#######", (*reply).InkRemaining)
+	// fmt.Println("@@@ CloseCanvas#######", blockChain)
 	return nil
 }
 
@@ -936,8 +942,12 @@ func (m *MinerToMinerRPC) SendBlockChain(bc []Block, reply *string) error {
 	// 1. Check if the sent block is longer than our block.
 	if isSentChainLonger(bc) {
 		fmt.Println("sbc: Received a longer chain than what we have.")
+		// fmt.Println("sufficient ink")
+		// fmt.Println(strconv.FormatBool(validateSufficientInkAll(bc)))
+		// fmt.Println("validateBlockChain")
+		// fmt.Println(strconv.FormatBool(validateBlockChain(bc)))
 		// 1.2 If the sent block <bc> is longer, validate that it is a good block chain
-		if validateSufficientInkAll(bc) && validateBlockChain(bc) {
+		if validateSufficientInkAll(bc) {
 			// 2.2 Otherwise acquire the lock for global blockchain and set it to sent block
 			fmt.Println("sbc: longer chain is valid, we'll throw ours away")
 			blockChain = bc

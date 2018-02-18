@@ -305,7 +305,7 @@ func main() {
 		}
 
 		mineNoOpBlocks(globalPubKeyStr)
-		randSleepTime := time.Duration(rand.Intn(3000)) * time.Millisecond
+		randSleepTime := time.Duration(rand.Intn(2000)) * time.Millisecond
 		time.Sleep(randSleepTime)
 		//fmt.Printf("Mined a block. Blockchain is now %d\n", len(blockChain))
 
@@ -360,6 +360,7 @@ func generateNoOpBlock(minerPubKey string) Block {
 		// fmt.Println("incrementing ink")
 		// fmt.Println(myInkAccount)
 		myInkAccount.InkMined = myInkAccount.InkMined + settings.InkPerNoOpBlock
+		fmt.Printf("reward: %d\n", settings.InkPerNoOpBlock)
 		myInkAccount.InkRemain = myInkAccount.InkRemain + settings.InkPerNoOpBlock
 		oldMinerInks[minerPubKey] = myInkAccount
 		// str := minerPubKey

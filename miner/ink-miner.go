@@ -906,7 +906,7 @@ func (m *MinerRPC) CloseCanvas(args int, reply *CloseCanvReply) error {
 	ink := blockChain[lastOne].MinerInks[globalPubKeyStr]
 
 	*reply = CloseCanvReply{blockChain[lastOne].CanvasOperations, ink.InkRemain}
-	//fmt.Println("@@@ CloseCanvas#######", (*reply).InkRemaining)
+	// fmt.Println("@@@ CloseCanvas#######", blockChain)
 	return nil
 }
 

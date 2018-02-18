@@ -50,14 +50,13 @@ func main() {
 		return
 	}
 
-	fmt.Printf("after add a line, ink remaining is %d\n", ink)
+	fmt.Printf("after add a triangle, ink remaining is %d\n", ink)
 
-	shapeHash2, blockHash2, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 300 0 L 0 500", "transparent", "red")
+	_, _, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 300 0 L 0 500", "transparent", "red")
 	if checkError(err) != nil {
 		return
 	}
-	fmt.Print(shapeHash2, blockHash2, ink2)
-
+	fmt.Printf("after add a line, ink remaining is %d\n", ink2)
 	// assert ink3 > ink2
 
 	// Close the canvas.

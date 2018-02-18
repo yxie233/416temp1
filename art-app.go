@@ -44,7 +44,7 @@ func main() {
 	validateNum := uint8(2)
 	fmt.Print(canvas, "ignore", validateNum)
 	// Add a line.
-	shapeHash, _, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 0 0 L 0 5", "transparent", "red")
+	shapeHash, blockHash, ink, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 0 0 L 0 5", "transparent", "red")
 	if checkError(err) != nil {
 		// return
 	}
@@ -52,11 +52,11 @@ func main() {
 	fmt.Println(shapeHash, ink)
 	println("----------------------------")
 
-	// inkRm, err3 := canvas.DeleteShape(3, shapeHash)
-	// if checkError(err3) != nil {
-	// 	return
-	// }
-	// fmt.Print("####", inkRm)
+	ss, err3 := canvas.GetShapes(blockHash)
+	if checkError(err3) != nil {
+		return
+	}
+	fmt.Print("getShape####", ss)
 
 	// // Add another line.
 	shapeHash2, blockHash2, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 0 0 l 39 0 v 39 h -39 z", "transparent", "blue")

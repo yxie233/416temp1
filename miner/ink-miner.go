@@ -824,7 +824,7 @@ func (m *MinerRPC) DeleteShape(args DelShapeArgs, inkRemaining *uint32) error {
 }
 
 func (m *MinerRPC) GetShapes(blockHash string, shapeHashes *[]string) error {
-	// fmt.Println("@@@ GetShapes")
+	var tmpHashs []string
 	lastOne := len(blockChain) - 1
 	if lastOne < 0 {
 		return InvalidBlockHashError(blockHash)
@@ -836,19 +836,24 @@ func (m *MinerRPC) GetShapes(blockHash string, shapeHashes *[]string) error {
 		noOp = settings.PoWDifficultyOpBlock
 	}
 	lastblockHash, _ := calculateHash(blockChain[lastOne], noOp)
+	// fmt.Println("@@@ GetShapes", lastblockHash, blockHash)
 	if lastblockHash == blockHash {
+
 		ops := blockChain[lastOne].Ops
 		for j := 0; j < len(ops); j++ {
-			(*shapeHashes)[j] = ops[j].OpSig
+			tmpHashs = append(tmpHashs, ops[j].OpSig)
 		}
 		return nil
 	}
-	for i := len(blockChain) - 1; i >= 0; i-- {
+	for i := len(blockChain) - 1; i > 0; i-- {
 		if blockChain[i].PrevHash == blockHash {
 			ops := blockChain[i-1].Ops
+			// fmt.Println("inside??")
 			for j := 0; j < len(ops); j++ {
-				(*shapeHashes)[j] = ops[j].OpSig
+				// fmt.Println("@@@ G???", ops[j].OpSig)
+				tmpHashs = append(tmpHashs, ops[j].OpSig)
 			}
+			*shapeHashes = tmpHashs
 			return nil
 		}
 	}

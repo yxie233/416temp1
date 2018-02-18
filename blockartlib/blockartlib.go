@@ -341,7 +341,7 @@ func (c *MyCanvas) GetInk() (inkRemaining uint32, err error) {
 // - ShapeOwnerError
 func (c *MyCanvas) DeleteShape(validateNum uint8, shapeHash string) (inkRemaining uint32, err error) {
 	args := DelShapeArgs{validateNum, shapeHash, c.artnodePrivKey}
-	fmt.Print(args.ShapeHash, "lib!!!")
+
 	err = c.conn.Call("InkMinerRPC.DeleteShape", args, &inkRemaining)
 	return inkRemaining, err
 }
@@ -352,6 +352,7 @@ func (c *MyCanvas) DeleteShape(validateNum uint8, shapeHash string) (inkRemainin
 // - InvalidBlockHashError
 func (c *MyCanvas) GetShapes(blockHash string) (shapeHashes []string, err error) {
 	err = c.conn.Call("InkMinerRPC.GetShapes", blockHash, &shapeHashes)
+	// fmt.Println(shapeHashes, "SSSSSSS2222lib!!!")
 	return shapeHashes, err
 }
 

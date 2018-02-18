@@ -950,6 +950,8 @@ func (m *MinerToMinerRPC) SendBlockChain(bc []Block, reply *string) error {
 		// 	return nil
 		// }
 		blockChain = bc
+		*reply = strconv.FormatBool(true)
+		return nil
 		// 2.1 If the longer sent block <bc> is bad, silently return
 	}
 	// 1.1 If the sent block <bc> is not longer, silently return

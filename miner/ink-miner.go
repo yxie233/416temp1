@@ -17,6 +17,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"net/rpc"
 	"os"
@@ -304,6 +305,8 @@ func main() {
 		}
 
 		mineNoOpBlocks(globalPubKeyStr)
+		randSleepTime = rand.Intn(3000) * time.Millisecond
+		time.Sleep(sleep_time)
 		//fmt.Printf("Mined a block. Blockchain is now %d\n", len(blockChain))
 
 		// fmt.Printf("lastOne index: %d\n", lastOne)
@@ -938,27 +941,24 @@ func (m *MinerToMinerRPC) EstablishReverseRPC(addr string, reply *string) error 
 }
 
 func (m *MinerToMinerRPC) SendBlockChain(bc []Block, reply *string) error {
-	// // 1. Check if the sent block is longer than our block.
-	// if isSentChainLonger(bc) {
-	// 	fmt.Println("sbc: Received a longer chain than what we have.")
-	// 	// 1.2 If the sent block <bc> is longer, validate that it is a good block chain
-	// 	// if validateSufficientInkAll(bc) {
-	// 	// 	// 2.2 Otherwise acquire the lock for global blockchain and set it to sent block
-	// 	// 	fmt.Println("sbc: longer chain is valid, we'll throw ours away")
-	// 	// 	blockChain = bc
-	// 	// 	*reply = strconv.FormatBool(true)
-	// 	// 	return nil
-	// 	// }
-	// 	blockChain = bc
-	// 	*reply = strconv.FormatBool(true)
-	// 	return nil
-	// 	// 2.1 If the longer sent block <bc> is bad, silently return
-	// }
-	// // 1.1 If the sent block <bc> is not longer, silently return
-	// *reply = strconv.FormatBool(false)
-	// return nil
-	blockChain = bc
-	*reply = strconv.FormatBool(true)
+	// 1. Check if the sent block is longer than our block.
+	if isSentChainLonger(bc) {
+		fmt.Println("sbc: Received a longer chain than what we have.")
+		// 1.2 If the sent block <bc> is longer, validate that it is a good block chain
+		// if validateSufficientInkAll(bc) {
+		// 	// 2.2 Otherwise acquire the lock for global blockchain and set it to sent block
+		// 	fmt.Println("sbc: longer chain is valid, we'll throw ours away")
+		// 	blockChain = bc
+		// 	*reply = strconv.FormatBool(true)
+		// 	return nil
+		// }
+		blockChain = bc
+		*reply = strconv.FormatBool(true)
+		return nil
+		// 2.1 If the longer sent block <bc> is bad, silently return
+	}
+	// 1.1 If the sent block <bc> is not longer, silently return
+	*reply = strconv.FormatBool(false)
 	return nil
 }
 

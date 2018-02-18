@@ -741,11 +741,16 @@ func (m *MinerRPC) AddShape(args AddShapeStruct, reply *AddShapeReply) error {
 
 func (m *MinerRPC) GetSvgString(shapeHash string, svgString *string) error {
 	lastOne := len(blockChain) - 1
-	operations := blockChain[lastOne].Ops
-	for i := 0; i < len(operations); i++ {
-		if operations[i].OpSig == shapeHash {
-			*svgString = operations[i].AppShape // svgString
-			return nil
+	operations := blockChain[lastOne].CanvasOperations
+	for _, ops := range operations {
+		for i := 0; i < len(ops); i++ {
+			strs := strings.Split(ops[i], ":")
+			svgStr := strs[0]
+			shapehash := strs[1]
+			if shapehash == shapeHash {
+				*svgString = svgStr
+				return nil
+			}
 		}
 	}
 	//fmt.Println("@@@ GetSvgString fail")

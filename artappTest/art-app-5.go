@@ -99,7 +99,7 @@ func main() {
 	}
 	fmt.Println("----------------------------")
 	fmt.Printf("actual svg string: %s\n", svgString)
-	fmt.Printf("expected svg string: %s\n", "M 500 0 l 50 0 l 50 50 h -50 z")
+	fmt.Printf("expected svg string: %s\n", "M 600 0 l 50 0 l 50 50 h -50 z")
 	fmt.Println("----------------------------")
 
 	_, err = canvas.GetSvgString("gibberish")

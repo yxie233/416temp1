@@ -268,19 +268,14 @@ func OpenCanvas(minerAddr string, privKey ecdsa.PrivateKey) (canvas Canvas, sett
 	privKeyInString := getPrivKeyInStr(privKey)
 	err = c.Call("InkMinerRPC.Connect", privKeyInString, &validMiner)
 
-	//println("2", (*validMiner).Valid)
-	// return canvas, CanvasSettings{}, InvalidShapeSvgStringError("ss")
 	if !(*validMiner).Valid {
 		return canvas, CanvasSettings{}, DisconnectedError("invalid miner key")
 	}
-
 	if err != nil {
 		return canvas, CanvasSettings{}, DisconnectedError("InkMinerRPC.Connect")
 	}
-	//println("3")
-	setting = (*validMiner).CanvSetting
 
-	//println("4")
+	setting = (*validMiner).CanvSetting
 	artPkinStr := getPrivKeyInStr(*artnodePK)
 	canv := MyCanvas{c, privKey, (*validMiner).CanvSetting, artPkinStr}
 	//fmt.Println("PPPPPPPPPPPPPP###", (*validMiner).CanvSetting)
@@ -312,8 +307,6 @@ func (c *MyCanvas) AddShape(validateNum uint8, shapeType ShapeType, shapeSvgStri
 	// if err1 != nil {
 	// 	return "", "", 0, err1
 	// }
-
-	// mpk := getPrivKeyInStr(c.minerPrivKey)
 
 	args := AddShapeStruct{1, shapeType, shapeSvgString, fill, stroke, c.artnodePrivKey}
 	reply := AddShapeReply{}
@@ -348,7 +341,7 @@ func (c *MyCanvas) GetInk() (inkRemaining uint32, err error) {
 // - ShapeOwnerError
 func (c *MyCanvas) DeleteShape(validateNum uint8, shapeHash string) (inkRemaining uint32, err error) {
 	args := DelShapeArgs{validateNum, shapeHash, c.artnodePrivKey}
-	fmt.Print(args.ShapeHash, "lib!!!")
+
 	err = c.conn.Call("InkMinerRPC.DeleteShape", args, &inkRemaining)
 	return inkRemaining, err
 }
@@ -359,6 +352,7 @@ func (c *MyCanvas) DeleteShape(validateNum uint8, shapeHash string) (inkRemainin
 // - InvalidBlockHashError
 func (c *MyCanvas) GetShapes(blockHash string) (shapeHashes []string, err error) {
 	err = c.conn.Call("InkMinerRPC.GetShapes", blockHash, &shapeHashes)
+	// fmt.Println(shapeHashes, "SSSSSSS2222lib!!!")
 	return shapeHashes, err
 }
 
@@ -385,11 +379,10 @@ func (c *MyCanvas) GetChildren(blockHash string) (blockHashes []string, err erro
 // - DisconnectedError
 func (c *MyCanvas) CloseCanvas() (inkRemaining uint32, err error) {
 	args := 0
-	// tmp := make(map[string][]string)
 
 	var reply *CloseCanvReply
 	reply = &CloseCanvReply{}
-	// reply.canvOps = &tmp
+
 	err = c.conn.Call("InkMinerRPC.CloseCanvas", args, &reply)
 	ops := (*reply).CanvOps
 	//fmt.Println("CC:", *reply)
@@ -420,7 +413,6 @@ func (c *MyCanvas) CloseCanvas() (inkRemaining uint32, err error) {
 
 	d1 := []byte(html)
 	saveOnDisk(d1)
-	// fmt.Println("8787872359874====++", html)
 	inkRemaining = (*reply).InkRemaining
 	return inkRemaining, err
 }

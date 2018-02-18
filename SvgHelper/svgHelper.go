@@ -511,12 +511,12 @@ func TransparentSvgToCoord(svgString string, publicKey string, minerInk int) (lo
 		//fmt.Printf("in localMapPoints, key %d, pstring %s\n", key, value)
 		ink++
 	}
-	fmt.Printf("close and ink--------------------------------------------------------------\n")
-	println(close)
-	println(ink)
+	// fmt.Printf("close and ink--------------------------------------------------------------\n")
+	// println(close)
+	// println(ink)
 	if ink > minerInk {
 		ink32 := int32(ink)
-		fmt.Printf("-------------------------------not enough ink---need %d----have %d-----------------\n", ink, minerInk)
+		//fmt.Printf("-------------------------------not enough ink---need %d----have %d-----------------\n", ink, minerInk)
 		err = InsufficientInkError(ink32)
 		return localMapPoints, ink, close, err
 	}
@@ -1005,11 +1005,11 @@ func FilledSvgToPolygon(transparentMapPoints map[int]point, publicKey string, mi
 		//fmt.Printf("in polygon row %d and ink %d--------------------------------------------------------------\n", j, ink)
 	}
 
-	fmt.Printf("in polygon close and ink--------------------------------------------------------------\n")
+	//fmt.Printf("in polygon close and ink--------------------------------------------------------------\n")
 	println(ink)
 	if ink > minerInk {
 		ink32 := int32(ink)
-		fmt.Printf("-------------------------------not enough ink---need %d----have %d-----------------\n", ink, minerInk)
+		//fmt.Printf("-------------------------------not enough ink---need %d----have %d-----------------\n", ink, minerInk)
 		return polygon, ink, InsufficientInkError(ink32)
 	}
 	//printPolygon(polygon)

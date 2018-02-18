@@ -268,7 +268,7 @@ func OpenCanvas(minerAddr string, privKey ecdsa.PrivateKey) (canvas Canvas, sett
 	privKeyInString := getPrivKeyInStr(privKey)
 	err = c.Call("InkMinerRPC.Connect", privKeyInString, &validMiner)
 
-	println("2", (*validMiner).Valid)
+	//println("2", (*validMiner).Valid)
 	// return canvas, CanvasSettings{}, InvalidShapeSvgStringError("ss")
 	if !(*validMiner).Valid {
 		return canvas, CanvasSettings{}, DisconnectedError("invalid miner key")
@@ -277,13 +277,13 @@ func OpenCanvas(minerAddr string, privKey ecdsa.PrivateKey) (canvas Canvas, sett
 	if err != nil {
 		return canvas, CanvasSettings{}, DisconnectedError("InkMinerRPC.Connect")
 	}
-	println("3")
+	//println("3")
 	setting = (*validMiner).CanvSetting
 
-	println("4")
+	//println("4")
 	artPkinStr := getPrivKeyInStr(*artnodePK)
 	canv := MyCanvas{c, privKey, (*validMiner).CanvSetting, artPkinStr}
-	fmt.Println("PPPPPPPPPPPPPP###", (*validMiner).CanvSetting)
+	//fmt.Println("PPPPPPPPPPPPPP###", (*validMiner).CanvSetting)
 	canvas = &canv
 	return canvas, setting, err
 }
@@ -392,7 +392,7 @@ func (c *MyCanvas) CloseCanvas() (inkRemaining uint32, err error) {
 	// reply.canvOps = &tmp
 	err = c.conn.Call("InkMinerRPC.CloseCanvas", args, &reply)
 	ops := (*reply).CanvOps
-	fmt.Println("CC:", *reply)
+	//fmt.Println("CC:", *reply)
 	tmpMap := make(map[string]string)
 	height := fmt.Sprint(c.CanvSetting.CanvasYMax)
 	width := fmt.Sprint(c.CanvSetting.CanvasXMax)

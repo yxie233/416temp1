@@ -293,26 +293,22 @@ func main() {
 	go monitorNumConnections(ipPort)
 
 	for {
-		sleep_time := 3000 * time.Millisecond
+		sleep_time := 100 * time.Millisecond
 		time.Sleep(sleep_time)
 
-		fmt.Println("Main still alive")
+		//fmt.Println("Main still alive")
 		if globalPubKeyStr == "" {
 			myPubKeyStr := getPubKeyInStr(myPrivKey.PublicKey)
 			globalPubKeyStr = myPubKeyStr
-			fmt.Printf("In main, global pubkeystr is: %s\n", globalPubKeyStr)
+			//fmt.Printf("In main, global pubkeystr is: %s\n", globalPubKeyStr)
 		}
 
 		mineNoOpBlocks(globalPubKeyStr)
-		fmt.Printf("Mined a block. Blockchain is now %d\n", len(blockChain))
-		lastOne := len(blockChain) - 1
-		fmt.Printf("lastOne index: %d\n", lastOne)
-		fmt.Printf("Last blk index: %d\n", blockChain[lastOne].Index)
-		//fmt.Printf("globalPubKeyStr: %s\n", globalPubKeyStr)
-		inkMinedRightNow := blockChain[lastOne].MinerInks[globalPubKeyStr].InkMined
-		inkRemainingRightNow := blockChain[lastOne].MinerInks[globalPubKeyStr].InkRemain
+		//fmt.Printf("Mined a block. Blockchain is now %d\n", len(blockChain))
 
-		fmt.Printf("My ink mined is %d remaining is: %d\n", inkMinedRightNow, inkRemainingRightNow)
+		// fmt.Printf("lastOne index: %d\n", lastOne)
+		// fmt.Printf("Last blk index: %d\n", blockChain[lastOne].Index)
+		//fmt.Printf("globalPubKeyStr: %s\n", globalPubKeyStr)
 	}
 }
 
@@ -358,8 +354,8 @@ func generateNoOpBlock(minerPubKey string) Block {
 	oldMinerInks := lastBlk.MinerInks
 
 	if myInkAccount, ok := oldMinerInks[minerPubKey]; ok {
-		fmt.Println("incrementing ink")
-		fmt.Println(myInkAccount)
+		// fmt.Println("incrementing ink")
+		// fmt.Println(myInkAccount)
 		myInkAccount.InkMined = myInkAccount.InkMined + settings.InkPerNoOpBlock
 		myInkAccount.InkRemain = myInkAccount.InkRemain + settings.InkPerNoOpBlock
 		oldMinerInks[minerPubKey] = myInkAccount
@@ -472,8 +468,15 @@ func isSentChainLonger(newBlocks []Block) bool {
 // the threshold
 func monitorNumConnections(ipPort string) {
 	for {
-		sleep_time := 20000 * time.Millisecond
+		sleep_time := 10000 * time.Millisecond
 		time.Sleep(sleep_time)
+
+		fmt.Printf("Blockchain length is now %d\n", len(blockChain))
+		lastOne := len(blockChain) - 1
+		inkMinedRightNow := blockChain[lastOne].MinerInks[globalPubKeyStr].InkMined
+		inkRemainingRightNow := blockChain[lastOne].MinerInks[globalPubKeyStr].InkRemain
+
+		fmt.Printf("My ink mined is %d remaining is: %d\n", inkMinedRightNow, inkRemainingRightNow)
 
 		var neighbours []net.Addr
 
@@ -531,7 +534,7 @@ func helperGetNodes(ipPort string, miner MinerInfo, addrSet *[]net.Addr) bool {
 	minersConnectedTo.Lock()
 	defer minersConnectedTo.Unlock()
 	if minersConnectedTo.currentNumNeighbours < int(settings.MinNumMinerConnections) {
-		fmt.Println("Inside helper get node, ready to make RPC call")
+		//fmt.Println("Inside helper get node, ready to make RPC call")
 		cRPC, err := rpc.Dial("tcp", ipPort)
 		defer cRPC.Close()
 		if err != nil {
@@ -644,7 +647,7 @@ func (m *MinerRPC) Connect(minerprivatekey string, reply *ValidMiner) error {
 
 	if myKeyPairInString == minerprivatekey {
 		v = ValidMiner{settings.CanvasSettings, true}
-		fmt.Println("validKey:", v)
+		//fmt.Println("validKey:", v)
 		*reply = v
 		return nil
 	}
@@ -683,12 +686,12 @@ func (m *MinerRPC) AddShape(args AddShapeStruct, reply *AddShapeReply) error {
 	lastBlockIndex := len(blockChain) - 1
 	lastBlk := blockChain[lastBlockIndex]
 	previousMap := lastBlk.CanvasInks
-	fmt.Println("@@@ADDDD1", args.ShapeSvgString)
+	//fmt.Println("@@@ADDDD1", args.ShapeSvgString)
 	spentInk, err := SvgHelper.AddShapeToMap(args.ShapeSvgString, args.ArtNodePK, args.Fill,
 		remainInk, previousMap)
 
 	currentInkRemain := remainInk - spentInk
-	fmt.Println("@@@ink remaining!!!! %d-----------spend!!!! %d-------currentinkRemain %d-------", remainInk, spentInk, currentInkRemain)
+	//fmt.Println("@@@ink remaining!!!! %d-----------spend!!!! %d-------currentinkRemain %d-------", remainInk, spentInk, currentInkRemain)
 	if err != nil {
 		return err
 	}
@@ -712,13 +715,13 @@ func (m *MinerRPC) AddShape(args AddShapeStruct, reply *AddShapeReply) error {
 	newOps = append(newOps, newOp)
 	mInks := blockChain[lastOne].MinerInks
 	incAcc := mInks[globalPubKeyStr]
-	fmt.Println("@@@ADD23DD")
+	//fmt.Println("@@@ADD23DD")
 
 	_, inkMined := totalInkSpentAndMinedByMiner(blockChain, pkStr)
 	incAcc.InkMined = inkMined
 	incAcc.InkSpent = uint32(spentInk) + incAcc.InkSpent
 	incAcc.InkRemain = inkMined - incAcc.InkSpent
-	fmt.Println("@@@in incAcc inkMined!!!! %d-----------inkSpent!!!! %d-------incAcc.inkRemain %d-------", inkMined, incAcc.InkSpent, incAcc.InkRemain)
+	fmt.Printf("@@@in incAcc inkMined!!!! %d-----------inkSpent!!!! %d-------incAcc.inkRemain %d-------\n", inkMined, incAcc.InkSpent, incAcc.InkRemain)
 
 	mInks[globalPubKeyStr] = incAcc
 
@@ -733,7 +736,7 @@ func (m *MinerRPC) AddShape(args AddShapeStruct, reply *AddShapeReply) error {
 	tmp, _ := strconv.ParseUint(nonce, 10, 32)
 	newBlock.Nonce = uint32(tmp)
 	blockChain = append(blockChain, newBlock)
-	fmt.Println("@@@ADD3DD")
+	//fmt.Println("@@@ADD3DD")
 
 	for {
 		last := len(blockChain) - 1
@@ -755,7 +758,7 @@ func (m *MinerRPC) GetSvgString(shapeHash string, svgString *string) error {
 			return nil
 		}
 	}
-	fmt.Println("@@@ GetSvgString fail")
+	//fmt.Println("@@@ GetSvgString fail")
 	return InvalidShapeHashError(shapeHash)
 }
 
@@ -766,7 +769,7 @@ func (m *MinerRPC) DeleteShape(args DelShapeArgs, inkRemaining *uint32) error {
 		return InvalidShapeHashError(args.ShapeHash)
 	}
 
-	fmt.Print("##KKK(99999)6KK", len(blockChain))
+	//fmt.Print("##KKK(99999)6KK", len(blockChain))
 	for k := 1; k < lastOne; k++ {
 		operations := blockChain[k].Ops
 		for i := 0; i < len(operations); i++ {
@@ -901,7 +904,7 @@ func (m *MinerRPC) GetChildren(blockHash string, blockHashes *[]string) error {
 }
 
 func (m *MinerRPC) CloseCanvas(args int, reply *CloseCanvReply) error {
-	fmt.Println("@@@ CloseCanvas")
+	//fmt.Println("@@@ CloseCanvas")
 	lastOne := len(blockChain) - 1
 	if lastOne < 0 {
 		*reply = CloseCanvReply{InkRemaining: 0}
@@ -910,7 +913,7 @@ func (m *MinerRPC) CloseCanvas(args int, reply *CloseCanvReply) error {
 	ink := blockChain[lastOne].MinerInks[globalPubKeyStr]
 
 	*reply = CloseCanvReply{blockChain[lastOne].CanvasOperations, ink.InkRemain}
-	fmt.Println("@@@ CloseCanvas#######", (*reply).InkRemaining)
+	//fmt.Println("@@@ CloseCanvas#######", (*reply).InkRemaining)
 	return nil
 }
 

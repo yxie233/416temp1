@@ -293,7 +293,7 @@ func main() {
 	go monitorNumConnections(ipPort)
 
 	for {
-		sleep_time := 100 * time.Millisecond
+		sleep_time := 500 * time.Millisecond
 		time.Sleep(sleep_time)
 
 		//fmt.Println("Main still alive")

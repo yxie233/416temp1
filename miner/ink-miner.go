@@ -363,9 +363,9 @@ func generateNoOpBlock(minerPubKey string) Block {
 		// fmt.Printf("in gen noop block: %s\n", str)
 		blk.MinerInks = oldMinerInks
 	} else {
-		fmt.Println("setting ink for first time")
+		//fmt.Println("setting ink for first time")
 		oldMinerInks[minerPubKey] = InkAccount{InkMined: settings.InkPerNoOpBlock, InkSpent: 0, InkRemain: settings.InkPerNoOpBlock}
-		fmt.Println(oldMinerInks)
+		//fmt.Println(oldMinerInks)
 		blk.MinerInks = oldMinerInks
 	}
 
@@ -482,8 +482,8 @@ func monitorNumConnections(ipPort string) {
 
 		helperGetNodes(ipPort, myMinerInfo, &neighbours)
 		if len(neighbours) > 0 {
+			fmt.Println("Below is the neighbours the server wants us to connect to.")
 			fmt.Println(neighbours)
-			fmt.Println("monitoring connections")
 			connectToMiners(neighbours)
 		}
 	}
@@ -553,7 +553,6 @@ func helperGetNodes(ipPort string, miner MinerInfo, addrSet *[]net.Addr) bool {
 }
 
 func connectToMiners(addrSet []net.Addr) {
-	fmt.Println("Inside connectToMiners")
 	for _, addr := range addrSet {
 		go connectToMiner(addr)
 	}
@@ -563,9 +562,7 @@ func connectToMiners(addrSet []net.Addr) {
 The miner shall establish TCP connections to the supplied neighbour miner
 */
 func connectToMiner(addr net.Addr) {
-	fmt.Println("Inside connectToMiner")
 	// Establish RPC connection to server
-	fmt.Println(addr.String())
 	miner2minerRPC, err := rpc.Dial("tcp", addr.String())
 	if err != nil {
 		fmt.Println(err.Error)
@@ -600,15 +597,13 @@ func handleMiner(otherMiner rpc.Client, otherMinerAddr net.Addr) {
 	fmt.Printf("Curr num neighbours connected to: %d\n", minersConnectedTo.currentNumNeighbours)
 	minersConnectedTo.Unlock()
 	reply := ""
-	fmt.Println("About to make RPC call")
 	err := otherMiner.Call("MinerToMinerRPC.PrintText", "Hi from your neighbour!", &reply)
 	if err != nil {
 		fmt.Println("Issue with RPC call in handleMiner")
 	}
-	fmt.Println("Finished RPC call")
 	fmt.Println(reply)
 	for {
-		fmt.Println("Connection still alive")
+		fmt.Printf("Connection to neighbour %s is still alive\n", otherMinerAddr.String())
 		sleep_time := 5000 * time.Millisecond
 		time.Sleep(sleep_time)
 
@@ -947,13 +942,8 @@ func (m *MinerToMinerRPC) EstablishReverseRPC(addr string, reply *string) error 
 
 func (m *MinerToMinerRPC) SendBlockChain(bc []Block, reply *string) error {
 	// 1. Check if the sent block is longer than our block.
-	fmt.Println("Inside sbc")
 	if isSentChainLonger(bc) {
 		fmt.Println("sbc: Received a longer chain than what we have.")
-		val0 := validateSufficientInkAll(bc)
-		fmt.Printf("Sufficient Ink: %s\n", strconv.FormatBool(val0))
-		val := validateBlockChain(bc)
-		fmt.Printf("Good block chain: %s\n", strconv.FormatBool(val))
 		// 1.2 If the sent block <bc> is longer, validate that it is a good block chain
 		if validateSufficientInkAll(bc) && validateBlockChain(bc) {
 			// 2.2 Otherwise acquire the lock for global blockchain and set it to sent block
@@ -1258,7 +1248,6 @@ func validateBlockChain(bc []Block) bool {
 		boolValidOpSig = validateBlockOpSigs(b)
 
 		if !boolValidNonce || !boolValidOpSig {
-			fmt.Println("Nonce or boolean is wrong.")
 			return false
 		}
 	}

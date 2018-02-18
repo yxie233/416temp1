@@ -305,8 +305,8 @@ func main() {
 		}
 
 		mineNoOpBlocks(globalPubKeyStr)
-		randSleepTime = rand.Intn(3000) * time.Millisecond
-		time.Sleep(sleep_time)
+		randSleepTime := rand.Intn(3000) * time.Millisecond
+		time.Sleep(randSleepTime)
 		//fmt.Printf("Mined a block. Blockchain is now %d\n", len(blockChain))
 
 		// fmt.Printf("lastOne index: %d\n", lastOne)

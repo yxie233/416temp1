@@ -942,12 +942,10 @@ func (m *MinerToMinerRPC) SendBlockChain(bc []Block, reply *string) error {
 	// 1. Check if the sent block is longer than our block.
 	if isSentChainLonger(bc) {
 		fmt.Println("sbc: Received a longer chain than what we have.")
-		// fmt.Println("sufficient ink")
-		// fmt.Println(strconv.FormatBool(validateSufficientInkAll(bc)))
-		// fmt.Println("validateBlockChain")
-		// fmt.Println(strconv.FormatBool(validateBlockChain(bc)))
+		fmt.Println("validateBlockChain")
+		fmt.Println(strconv.FormatBool(validateBlockChain(bc)))
 		// 1.2 If the sent block <bc> is longer, validate that it is a good block chain
-		if validateSufficientInkAll(bc) {
+		if validateSufficientInkAll(bc) && validateBlockChain(bc) {
 			// 2.2 Otherwise acquire the lock for global blockchain and set it to sent block
 			fmt.Println("sbc: longer chain is valid, we'll throw ours away")
 			blockChain = bc
@@ -1237,7 +1235,7 @@ func validateBlockOpSigs(b Block) bool {
 func validateBlockChain(bc []Block) bool {
 	var hashVal string
 	var boolValidNonce bool
-	var boolValidOpSig bool
+	//var boolValidOpSig bool
 
 	for _, b := range bc {
 		if b.Index > 1 {
@@ -1247,9 +1245,12 @@ func validateBlockChain(bc []Block) bool {
 		}
 
 		boolValidNonce, hashVal = validateBlockHashNonce(b)
-		boolValidOpSig = validateBlockOpSigs(b)
+		//boolValidOpSig = validateBlockOpSigs(b)
 
-		if !boolValidNonce || !boolValidOpSig {
+		fmt.Printf("boolvalidNonce: %s\n", strconv.FormatBool(boolValidNonce))
+		//fmt.Printf("boolvalidsig: %s\n", strconv.FormatBool(boolValidOpSig))
+
+		if !boolValidNonce {
 			return false
 		}
 	}

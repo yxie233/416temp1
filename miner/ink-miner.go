@@ -457,7 +457,7 @@ func computeNonceSecretHash(nonce string, secret string) string {
 }
 
 func isSentChainLonger(newBlocks []Block) bool {
-	if len(newBlocks) > len(blockChain) {
+	if len(newBlocks) >= len(blockChain) {
 		return true
 	}
 

@@ -336,7 +336,6 @@ func generateNoOpBlock(minerPubKey string) Block {
 	opsArr := make([]Operation, 0)
 	cInks := lastBlk.CanvasInks
 	cOps := lastBlk.CanvasOperations
-	fmt.Println(cOps)
 
 	lastBlkHash, _ := calculateHash(lastBlk, difficulty)
 
@@ -942,16 +941,15 @@ func (m *MinerToMinerRPC) SendBlockChain(bc []Block, reply *string) error {
 	// 1. Check if the sent block is longer than our block.
 	if isSentChainLonger(bc) {
 		fmt.Println("sbc: Received a longer chain than what we have.")
-		fmt.Println("validateBlockChain")
-		fmt.Println(strconv.FormatBool(validateBlockChain(bc)))
 		// 1.2 If the sent block <bc> is longer, validate that it is a good block chain
-		if validateSufficientInkAll(bc) && validateBlockChain(bc) {
-			// 2.2 Otherwise acquire the lock for global blockchain and set it to sent block
-			fmt.Println("sbc: longer chain is valid, we'll throw ours away")
-			blockChain = bc
-			*reply = strconv.FormatBool(true)
-			return nil
-		}
+		// if validateSufficientInkAll(bc) {
+		// 	// 2.2 Otherwise acquire the lock for global blockchain and set it to sent block
+		// 	fmt.Println("sbc: longer chain is valid, we'll throw ours away")
+		// 	blockChain = bc
+		// 	*reply = strconv.FormatBool(true)
+		// 	return nil
+		// }
+		blockChain = bc
 		// 2.1 If the longer sent block <bc> is bad, silently return
 	}
 	// 1.1 If the sent block <bc> is not longer, silently return
@@ -1246,9 +1244,6 @@ func validateBlockChain(bc []Block) bool {
 
 		boolValidNonce, hashVal = validateBlockHashNonce(b)
 		//boolValidOpSig = validateBlockOpSigs(b)
-
-		fmt.Printf("boolvalidNonce: %s\n", strconv.FormatBool(boolValidNonce))
-		//fmt.Printf("boolvalidsig: %s\n", strconv.FormatBool(boolValidOpSig))
 
 		if !boolValidNonce {
 			return false

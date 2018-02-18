@@ -9,7 +9,7 @@ stored in. Expect that this shape costs 2500 ink to draw.
 that it is the same shape hash as was returned in step #1.
 3-4. Verify that we can obtain the genesis block hash and obtain a list of child nodes.
 5. Next, we verify that, given the shape hash in step #1, we can obtain back the same SVG string
-that we fed into the API call in step #1. 
+that we fed into the API call in step #1.
 6. Finally, we invoke blockartlib.GetSvgString with gibberish hash and verify that we obtain
 an invalid shape hash error.
 
@@ -63,25 +63,40 @@ func main() {
 	fmt.Printf("Shape hash: %s, block hash: %s\n", shapeHash, blockHash)
 	fmt.Println("----------------------------")
 
-
-	blockShapes, _ := canvas.GetShapes(blockHash)
+	blockShapes, err := canvas.GetShapes(blockHash)
+	if checkError(err) != nil {
+		fmt.Println(err)
+		return
+	}
 	fmt.Println("----------------------------")
 	fmt.Println("block shapes")
 	fmt.Println(blockShapes)
 	fmt.Println("----------------------------")
 
-	genHash, _ := canvas.GetGenesisBlock()
+	genHash, err := canvas.GetGenesisBlock()
+	if checkError(err) != nil {
+		fmt.Println(err)
+		return
+	}
 	fmt.Println("----------------------------")
 	fmt.Printf("gen hash %s\n", genHash)
 	fmt.Println("----------------------------")
 
-	childrenBlocks, _ := canvas.GetChildren(genHash)
+	childrenBlocks, err := canvas.GetChildren(genHash)
+	if checkError(err) != nil {
+		fmt.Println(err)
+		return
+	}
 	fmt.Println("----------------------------")
 	fmt.Println("children blocks of gen block")
 	fmt.Println(childrenBlocks)
 	fmt.Println("----------------------------")
 
-	svgString, _ := canvas.GetSvgString(shapeHash)
+	svgString, err := canvas.GetSvgString(shapeHash)
+	if checkError(err) != nil {
+		fmt.Println(err)
+		return
+	}
 	fmt.Println("----------------------------")
 	fmt.Printf("actual svg string: %s\n", svgString)
 	fmt.Printf("expected svg string: %s\n", "M 500 0 l 50 0 l 50 50 h -50 z")

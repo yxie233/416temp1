@@ -336,6 +336,7 @@ func generateNoOpBlock(minerPubKey string) Block {
 	opsArr := make([]Operation, 0)
 	cInks := lastBlk.CanvasInks
 	cOps := lastBlk.CanvasOperations
+	fmt.Println(cOps)
 
 	lastBlkHash, _ := calculateHash(lastBlk, difficulty)
 
@@ -941,8 +942,12 @@ func (m *MinerToMinerRPC) SendBlockChain(bc []Block, reply *string) error {
 	// 1. Check if the sent block is longer than our block.
 	if isSentChainLonger(bc) {
 		fmt.Println("sbc: Received a longer chain than what we have.")
+		// fmt.Println("sufficient ink")
+		// fmt.Println(strconv.FormatBool(validateSufficientInkAll(bc)))
+		// fmt.Println("validateBlockChain")
+		// fmt.Println(strconv.FormatBool(validateBlockChain(bc)))
 		// 1.2 If the sent block <bc> is longer, validate that it is a good block chain
-		if validateSufficientInkAll(bc) && validateBlockChain(bc) {
+		if validateSufficientInkAll(bc) {
 			// 2.2 Otherwise acquire the lock for global blockchain and set it to sent block
 			fmt.Println("sbc: longer chain is valid, we'll throw ours away")
 			blockChain = bc

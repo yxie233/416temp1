@@ -1,3 +1,4 @@
 ./*/debug
 .vscode/launch.json
 drawOutput.html
+output.html

@@ -52,14 +52,14 @@ func main() {
 	fmt.Println(shapeHash, ink)
 	println("----------------------------")
 
-	inkRm, err3 := canvas.DeleteShape(3, shapeHash)
-	if checkError(err3) != nil {
-		return
-	}
-	fmt.Print("####", inkRm)
+	// inkRm, err3 := canvas.DeleteShape(3, shapeHash)
+	// if checkError(err3) != nil {
+	// 	return
+	// }
+	// fmt.Print("####", inkRm)
 
 	// // Add another line.
-	shapeHash2, blockHash2, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 0 0 L 0 5", "transparent", "red")
+	shapeHash2, blockHash2, ink2, err := canvas.AddShape(validateNum, blockartlib.PATH, "M 0 0 l 39 0 v 39 h -39 z", "fill", "blue")
 	if checkError(err) != nil {
 		return
 	}

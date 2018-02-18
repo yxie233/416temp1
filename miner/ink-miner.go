@@ -162,8 +162,8 @@ type MinerRPC int
 type MinerToMinerRPC int
 
 type ValidMiner struct {
-	MinerNetSets MinerNetSettings
-	Valid        bool
+	CanvSetting CanvasSettings
+	Valid       bool
 }
 
 type ShapeType int
@@ -643,8 +643,8 @@ func (m *MinerRPC) Connect(minerprivatekey string, reply *ValidMiner) error {
 	// fmt.Println(minerprivatekey)
 
 	if myKeyPairInString == minerprivatekey {
-		v = ValidMiner{MinerNetSets: settings, Valid: true}
-		fmt.Println("validKey:", minerprivatekey)
+		v = ValidMiner{settings.CanvasSettings, true}
+		fmt.Println("validKey:", v)
 		*reply = v
 		return nil
 	}

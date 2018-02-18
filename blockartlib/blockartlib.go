@@ -303,6 +303,10 @@ func (c *MyCanvas) AddShape(validateNum uint8, shapeType ShapeType, shapeSvgStri
 		println("-----------------------------------------------------")
 		return "", "", 0, InvalidShapeSvgStringError("fill and stroke can't both be transparent")
 	}
+	if onlyWhiteSpace(stroke) || onlyWhiteSpace(fill) || (fill != "fill" && fill != "transparent") {
+		println("-----------------------------------------------------")
+		return "", "", 0, InvalidShapeSvgStringError("fill and stroke can't be empty")
+	}
 	// err1 := validSvgCommand(shapeSvgString)
 	// if err1 != nil {
 	// 	return "", "", 0, err1
@@ -460,4 +464,16 @@ func validSvgCommand(c string) error {
 	}
 
 	return nil
+}
+
+func onlyWhiteSpace(c string) bool {
+
+	for i := 0; i < len(c); i++ {
+		tmp := fmt.Sprint(c[i])
+		if tmp != " " {
+			return false
+		}
+	}
+
+	return true
 }
